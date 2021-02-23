@@ -1,6 +1,7 @@
 function [output] = MyCanny(image,sigma,tau)
-%MYCANNY Summary of this function goes here
-%   Detailed explanation goes here
+%MYCANNY Implements the Canny edge detection
+%   Takes in a grayscale image, standard deviation for the gaussian sigma, 
+%   and threshold tau
 
 % Step 1 - Smooth the image using a 2D Gaussian
 % Using the 3 sigma rule.
@@ -10,7 +11,7 @@ function [output] = MyCanny(image,sigma,tau)
 
 filterSize = 6*sigma+1;
 gaussian2D = fspecial('gaussian',filterSize,sigma);
-smoothedImage = imfilter(double(image),gaussian2D,'conv');
+smoothedImage = imfilter(image,gaussian2D,'conv');
 
 % Step 2 - Computing the gradient and squared gradient magnitude
 % Horizontal and Vertical Filters
@@ -20,17 +21,28 @@ dx = imfilter(double(smoothedImage), h', 'conv');
 dy = imfilter(double(smoothedImage), h, 'conv');
 
 gradMag = sqrt(dx.^2 + dy.^2);
-% Returns radians between [-pi, pi]
-gradOri = atan2(dy,dx);
+% Returns degrees between [0, 180]
+gradOri = atan2(dy,dx)*(180/pi);
+for i = 1 : size(gradOri,1)
+    for j = 1 : size(gradOri,2)
+        if gradOri(i,j) < 0
+            gradOri(i,j) = gradOri(i,j) + 180;
+        end
+    end
+end
+
 % Uses custom function roundRadians to round to enumerated values
-rounded = roundRadians(gradOri); 
+rounded = roundDegrees(gradOri); 
 
-enumRad = [-pi -3*pi/4 -pi/2 -pi/4 0 pi/4 pi/2 3*pi/4 pi];
-enumI = [0 -1 -1 -1 0 1 1 1 0];
-enumJ = [-1 -1 0 1 1 1 0 -1 -1];
+enumRad = [0 45 90 135 180];
+enumI = [0 -1 -1 -1 0];
+enumJ = [1 1 0 -1 -1];
 
-nonMaxSup = zeros(size(rounded));
-% Non-max suppression
+% Thresholding
+nonMaxSup = gradMag;
+nonMaxSup(nonMaxSup<tau) = 0;
+
+% Step 3 - Non-max suppression
 for i = 2 : size(image,1)-1
     for j = 2 : size(image,2)-2
         % Find adjacent pixels
@@ -43,33 +55,28 @@ for i = 2 : size(image,1)-1
         end
         % adjacent pixels found adjI and adjJ
         % Find max pixel and suppress others
-        if gradMag(i+adjI,j+adjJ) >= gradMag(i,j) && ...
-            gradMag(i+adjI,j+adjJ) >= gradMag(i-adjI,j-adjJ)
-            nonMaxSup(i+adjI,j+adjJ) = gradMag(i+adjI,j+adjJ);
+        if nonMaxSup(i+adjI,j+adjJ) >= nonMaxSup(i,j) && ...
+            nonMaxSup(i+adjI,j+adjJ) >= nonMaxSup(i-adjI,j-adjJ) && ...
+            nonMaxSup(i+adjI,j+adjJ) ~= 0
+            nonMaxSup(i+adjI,j+adjJ) = 1;
             nonMaxSup(i,j) = 0;
             nonMaxSup(i-adjI,j-adjJ) = 0;
-        elseif gradMag(i,j) >= gradMag(i+adjI,j+adjJ) && ...
-                gradMag(i,j) >= gradMag(i-adjI,j-adjJ)
-            nonMaxSup(i,j) = gradMag(i,j);
+        elseif nonMaxSup(i,j) >= nonMaxSup(i+adjI,j+adjJ) && ...
+                nonMaxSup(i,j) >= nonMaxSup(i-adjI,j-adjJ) && ...
+                nonMaxSup(i,j) ~= 0
+            nonMaxSup(i,j) = 1;
             nonMaxSup(i+adjI,j+adjJ) = 0;
             nonMaxSup(i-adjI,j-adjJ) = 0;
-        else
-            nonMaxSup(i-adjI,j-adjJ) = gradMag(i-adjI,j-adjJ);
+        elseif nonMaxSup(i-adjI,j-adjJ) >= nonMaxSup(i+adjI,j+adjJ) && ...
+                nonMaxSup(i-adjI,j-adjJ) >= nonMaxSup(i,j) && ...
+                nonMaxSup(i-adjI,j-adjJ) ~= 0
+            nonMaxSup(i-adjI,j-adjJ) = 1;
             nonMaxSup(i,j) = 0;
             nonMaxSup(i+adjI,j+adjJ) = 0;
         end
     end
 end
 
-figure;
-imshow(gradMag);
-figure;
-imshow(uint8(nonMaxSup));
-figure;
-imshow(edge(image,'Canny',tau,sigma));
-figure;
-imshow(edge(image));
-
-output = image;
+output = nonMaxSup(2:size(nonMaxSup,1)-1,2:size(nonMaxSup,2)-1);
+output = logical(output);
 end
-% answer = edge(image,'Canny',tau,sigma);

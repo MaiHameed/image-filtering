@@ -145,13 +145,13 @@ kernelColumns = fspecial('gaussian',[1,49],8);
 
 disp('Time measurement of the 2D process:');
 tic;
-img2D = imfilter(image, kernel2D);
+img2D = imfilter(image, kernel2D, 'conv');
 toc;
 
 disp('Time measurements of both 1D processes:');
 tic;
-img1D = imfilter(image, kernelRows);
-img1D = imfilter(img1D, kernelColumns);
+img1D = imfilter(image, kernelRows, 'conv');
+img1D = imfilter(img1D, kernelColumns, 'conv');
 toc;
 
 maxVal = max(max(img2D-img1D));

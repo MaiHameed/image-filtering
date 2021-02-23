@@ -1,9 +1,9 @@
-function [output] = roundRadians(input)
-%ROUNDRADIANS Rounds an input matrix to an enumerated value
-%   Given a matrix of radians in the range [-pi, pi], round the angle to one 
-%   of these [-pi -3*pi/4 -pi/2 -pi/4 0 pi/4 pi/2 3*pi/4 pi]
+function [output] = roundDegrees(input)
+%ROUNDDEGREES Rounds an input matrix to an enumerated value
+%   Given a matrix of degrees in the range [0, 180], round the angle to one 
+%   of these [0 45 90 135 180]
 
-greaterThan = [-pi -3*pi/4 -pi/2 -pi/4 0 pi/4 pi/2 3*pi/4];
+greaterThan = [0 45 90 135 180];
 % Left circular shift of greaterThan
 lessThan = cat(2,greaterThan(1,2:size(greaterThan,2)),-greaterThan(1,1));
 
