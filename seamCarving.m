@@ -1,4 +1,4 @@
-%% Q3.1
+%% Q3.1 Seam Carving - Removal Only
 fprintf('Question 3.1 starting...\n');
 
 image = imread('ryerson.jpg');
@@ -36,3 +36,25 @@ carve3 = MySeamCarving(image2,360,512);
 imshow(carve3,[]);
 title('Lenna image resized to 360x512 through seam carving');
 toc;
+
+fprintf('Question 3.1 done! Press enter to continue...\n\n');
+pause;
+
+%% Q3.2 Seam Carving - Addition
+fprintf('Question 3.2 starting...\n');
+
+image = imread('ryerson.jpg');
+
+figure;
+imshow(image,[]);
+title('Original Ryerson image 720x480');
+
+disp('Increasing to 720x580...');
+tic;
+figure;
+carve4 = MySeamCarving(image,720,580);
+imshow(carve4,[]);
+title('Ryerson image resized to 720x580 through seam carving');
+toc;
+
+fprintf('Question 3.2 done!\n');

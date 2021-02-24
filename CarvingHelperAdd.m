@@ -1,17 +1,14 @@
-function [output] = CarvingHelper(image)
-%CARVINGHELPER Takes in an image and removes a vertical seam using seam
-%carving
-%   Takes in an RGB image and removes a vertical seam, returning the
-%   original image reduced by one pixel in the horizontal resolution
+function [output] = CarvingHelperAdd(image)
+%CARVINGHELPERADD Adds a single vertical seam to an input image
+%   Uses seam carving to increase the width by 1 pixel by adding a vertical
+%   seam
 
 % Step 1 - Obtain energies of each channel in coloured image
-% The instructions never specified using manual gradient/energy
-% calculations, I assumed the safe usage of the functions below
 [r,g,b] = imsplit(image);
 
 % Initialize the new 3 colour channels at the same size of original image
-% minus one column
-newR = r(:,1:end - 1);
+% plus one column
+newR = [r(:,:) zeros(size(r,1),1)];
 newG = newR;
 newB = newR;
 
@@ -37,7 +34,7 @@ for i = 2 : size(E,1) % For each row
     end
 end
 
-% Obtain pixels to delete
+% Obtain pixels to add
 for i = size(E,1):-1:1 % For each row in the M matrix
     if i == size(E,1) 
         % If we're at the bottom-most row, simply find the minimum value
@@ -60,20 +57,20 @@ for i = size(E,1):-1:1 % For each row in the M matrix
         end
     end 
     % I corresponds to the column in the current row which contains the
-    % minimum element. Proceed to delete that pixel in all 3 colour
+    % minimum element. Proceed to add that pixel in all 3 colour
     % channels
-    if I == 1 % If the deletion is the left most pixel
-        newR(i,:) = r(i,2:end);
-        newG(i,:) = g(i,2:end);
-        newB(i,:) = b(i,2:end);
-    elseif I == size(r,2) % If the deletion is the right most pixel
-        newR(i,:) = r(i,1:end-1);
-        newG(i,:) = g(i,1:end-1);
-        newB(i,:) = b(i,1:end-1);
-    else % The deletion is somewhere in the middle
-        newR(i,:) = [r(i,1:I-1) r(i,I+1:end)];
-        newG(i,:) = [g(i,1:I-1) g(i,I+1:end)];
-        newB(i,:) = [b(i,1:I-1) b(i,I+1:end)];
+    if I == 1 % If the addition is the left most pixel
+        newR(i,:) = [r(i,I) r(i,:)];
+        newG(i,:) = [g(i,I) g(i,:)];
+        newB(i,:) = [b(i,I) b(i,:)];
+    elseif I == size(r,2) % If the addition is the right most pixel
+        newR(i,:) = [r(i,:) r(i,I)];
+        newG(i,:) = [g(i,:) g(i,I)];
+        newB(i,:) = [b(i,:) b(i,I)];
+    else % The addition is somewhere in the middle
+        newR(i,:) = [r(i,1:I) r(i,I) r(i,I+1:end)];
+        newG(i,:) = [g(i,1:I) g(i,I) g(i,I+1:end)];
+        newB(i,:) = [b(i,1:I) b(i,I) b(i,I+1:end)];
     end
 end
 
