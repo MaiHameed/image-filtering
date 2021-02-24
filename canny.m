@@ -17,7 +17,7 @@ fprintf('Question 2.1 done! Press enter to continue...\n\n');
 pause;
 
 %% Q2.2
-fprintf('Question 2.2 starting...\n');
+fprintf('View source code for Question 2.2\n');
 
 sigma = 5;
 
@@ -34,5 +34,3 @@ smoothedImage = imfilter(smoothedImage, gausColumns, 'conv');
 
 % To implement this in the MyCanny function, simply overwrite the code in
 % step 1 with the above process
-
-fprintf('Question 2.2 done!\n');

@@ -1,4 +1,4 @@
-%% CPS843 Assignment 1 - MATLAB Warm-up
+%% CPS843 Assignment 1 - Filtering
 % Student Name: Mai Abdelhameed
 % Student Number: 500769087
 
@@ -17,4 +17,4 @@ pause;
 %% Q3
 fprintf('Question 3 starting...\n');
 seamCarving;
-fprintf('Question 3 done! Press enter to continue...\n\n');
+fprintf('Question 3 done!');

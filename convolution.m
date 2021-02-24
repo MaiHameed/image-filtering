@@ -109,15 +109,15 @@ convImage = imfilter(image, kernel, 'conv');
 diffImage = myConvImage - convImage;
 
 figure;
-imshow(myConvImage);
+imshow(myConvImage,[]);
 title('Result of MyConv()');
 
 figure;
-imshow(convImage);
+imshow(convImage,[]);
 title('Result of imfilter()');
 
 figure;
-imshow(diffImage);
+imshow(diffImage,[]);
 title('Difference of images');
 
 maxVal = max(max(diffImage));

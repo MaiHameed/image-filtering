@@ -3,17 +3,18 @@ function [output] = MySeamCarving(image,hori,vert)
 %   Takes an RGB image and uses horizontal and vertical seam carving to
 %   return the image with the new desired resolution (hori x vert)
 
-% Part A - Compute energies
-% The instructions never specified using manual gradient/energy
-% calculations, I assumed the safe usage of the functions below
-[r,g,b] = imsplit(image);
-% image = cat(3,r,g,b); To combine the channels into former image
+[imgRows, imgCol, ~] = size(image);
 
-[gradMagR, gradOriR] = imgradient(r);
-[gradMagG, gradOriG] = imgradient(g);
-[gradMagB, gradOriB] = imgradient(b);
+seamImg = image;
+for i = 1:imgCol-hori
+    seamImg = CarvingHelper(seamImg);
+end
 
+seamImg = rot90(seamImg,1);
+for i = 1:imgRows-vert
+    seamImg = CarvingHelper(seamImg);
+end 
 
-output = image;
+output = rot90(seamImg,3);
 end
 
