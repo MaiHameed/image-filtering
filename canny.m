@@ -6,6 +6,14 @@ image = rgb2gray(imread('bowl-of-fruit.jpg'));
 image2 = rgb2gray(imread('puppy.jpg'));
 
 figure;
+imshow(image,[]);
+title('Image 1');
+
+figure;
+imshow(image2,[]);
+title('Image 2');
+
+figure;
 imshow(MyCanny(image,5,20),[]);
 title('Custom Canny Implementation on Image 1');
 
@@ -17,7 +25,7 @@ fprintf('Question 2.1 done! Press enter to continue...\n\n');
 pause;
 
 %% Q2.2
-fprintf('View source code for Question 2.2\n');
+fprintf('View source code for Question 2.2 in canny.m\n');
 
 sigma = 5;
 

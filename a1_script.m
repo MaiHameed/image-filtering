@@ -17,4 +17,5 @@ pause;
 %% Q3
 fprintf('Question 3 starting...\n');
 seamCarving;
-fprintf('Question 3 done!');
+fprintf('Question 3 done!\n');
+fprintf('End of program\n');
